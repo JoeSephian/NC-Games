@@ -19,6 +19,9 @@ describe("getCategories", () => {
         });
       });
   });
+});
+
+describe('404 error handling', () => {
   it("should return 404 if incorrect endpoint", () => {
     return request(app)
       .get("/api/notavalidurl")
@@ -28,5 +31,3 @@ describe("getCategories", () => {
       });
   });
 });
-
-
