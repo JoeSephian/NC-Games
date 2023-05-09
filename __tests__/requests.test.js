@@ -31,3 +31,17 @@ describe('404 error handling', () => {
       });
   });
 });
+
+describe("get API endpoints", () => {
+  it('GET - status: 200 - responds with all api endpoints', () => {
+      return request(app)
+      .get("/api")
+      .expect(200)
+      .then((res) => {
+          expect(typeof res.body).toBe('object')
+          expect(typeof res.body["GET /api"].description).toBe('string')
+          expect(res.body.hasOwnProperty('GET /api/categories'))
+          expect(res.body.hasOwnProperty('GET /api/reviews'))
+      })
+  })
+});
