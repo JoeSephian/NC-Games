@@ -3,6 +3,8 @@ const testData = require("../db/data/test-data/index");
 const db = require("../db/connection");
 const request = require("supertest");
 const app = require("../db/app");
+const jsonFile = require("../endpoints.json");
+
 beforeEach(() => seed(testData));
 
 afterAll(() => db.end());
@@ -21,13 +23,26 @@ describe("getCategories", () => {
   });
 });
 
-describe('404 error handling', () => {
+describe("404 error handling", () => {
   it("should return 404 if incorrect endpoint", () => {
     return request(app)
       .get("/api/notavalidurl")
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("404 - not found");
+      });
+  });
+});
+
+describe("get API endpoints", () => {
+  it("GET - status: 200 - responds with all api endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((res) => {
+        expect(typeof res.body).toBe("object");
+        expect(res.body).toEqual(jsonFile);
+        expect(typeof res.body["GET /api"].description).toBe("string");
       });
   });
 });
