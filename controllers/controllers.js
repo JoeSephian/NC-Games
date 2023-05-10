@@ -1,5 +1,7 @@
-const { allCategories, returnReview } = require("../models/models");
+const { allCategories, allEndpoints, returnReview } = require("../models/models");
+const endpoints = require('../endpoints.json')
 
+console.log(endpoints)
 exports.getCategories = (req, res, next) => {
   const { slug, description } = req.query;
   allCategories(slug, description)
@@ -17,3 +19,7 @@ exports.getReview = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getEndpoints = (req, res, next) => {
+  res.status(200).send(endpoints)
+}
