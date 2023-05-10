@@ -1,6 +1,7 @@
 const { allCategories, allEndpoints } = require("../models/models");
-const fs = require('fs')
+const endpoints = require('../endpoints.json')
 
+console.log(endpoints)
 exports.getCategories = (req, res, next) => {
   const { slug, description } = req.query;
   allCategories(slug, description)
@@ -13,10 +14,5 @@ exports.getCategories = (req, res, next) => {
 };
 
 exports.getEndpoints = (req, res, next) => {
-  fs.readFile(`${__dirname}/../endpoints.json`, "utf-8", (err, data) => {
-    if (err) {
-      console.log(err)
-    }
-    res.json(JSON.parse(data))
-  })
+  res.status(200).send(endpoints)
 }
