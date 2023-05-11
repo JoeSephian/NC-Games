@@ -47,3 +47,22 @@ exports.allReviews = (sort_by = "created_at", order = "DESC") => {
       return rows;
     });
 };
+
+exports.createComment = (newComment, review_id) => {
+  const { body, author } = newComment;
+  const postCommentQuery = `
+  INSERT INTO comments
+  (body, author, review_id)
+  VALUES
+  ($1, $2, $3)
+  RETURNING *;`;
+
+  return db
+    .query(postCommentQuery, [body, author, review_id])
+    .then(({ rows }) => {
+      return rows[0];
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};

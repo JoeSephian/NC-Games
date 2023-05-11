@@ -96,7 +96,6 @@ describe("getReviews", () => {
       .get("/api/reviews")
       .expect(200)
       .then((res) => {
-        console.log(res.body);
         expect(res.body.reviews[0].review_id).toBe(7);
         expect(res.body.reviews[0].comment_count).toBe(0);
         expect(res.body.reviews[7].review_id).toBe(2);
@@ -104,6 +103,36 @@ describe("getReviews", () => {
         res.body.reviews.forEach((review) => {
           expect(typeof review.comment_count).toBe("number");
         });
+      });
+  });
+});
+
+describe("postComment", () => {
+  it("GET - status: 201 - array of reviews is returned with the correct properties", () => {
+    const newComment = {
+      body: "this game is wonderful",
+      author: "mallionaire",
+    };
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then((res) => {
+        console.log(res.body)
+        expect(res.body.comment.author).toBe("mallionaire");
+        expect(res.body.comment.body).toBe("this game is wonderful");
+        expect(res.body.comment.comment_id).toBe(7);
+        expect(typeof res.body.comment.created_at).toBe("string");
+        expect(res.body.comment.review_id).toBe(2);
+        expect(res.body.comment.votes).toBe(0);
+      });
+  });
+  it("should return 404 if incorrect endpoint", () => {
+    return request(app)
+      .get("/api/reviews/200/comments")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("404 - not found");
       });
   });
 });

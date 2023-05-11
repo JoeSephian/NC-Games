@@ -1,4 +1,4 @@
-const { allCategories, returnReview, allReviews } = require("../models/models");
+const { allCategories, returnReview, allReviews, createComment } = require("../models/models");
 const endpoints = require('../endpoints.json')
 
 exports.getCategories = (req, res, next) => {
@@ -22,9 +22,18 @@ exports.getReview = (req, res, next) => {
 exports.getReviews = (req, res, next) => {
   return allReviews()
   .then((reviews) => {
-    // console.log(reviews)
     res.status(200).send({ reviews })
   })
+}
+
+exports.postComment = (req, res, next) => {
+  const newComment = req.body;
+  const {review_id} = req.params
+  createComment(newComment, review_id)
+  .then((comment) => {
+    res.status(201).send({ comment })
+  })
+  .catch(next)
 }
 
 exports.getEndpoints = (req, res, next) => {
