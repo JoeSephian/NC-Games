@@ -96,8 +96,13 @@ describe("getReviews", () => {
       .get("/api/reviews")
       .expect(200)
       .then((res) => {
+        console.log(res.body);
+        expect(res.body.reviews[0].review_id).toBe(7);
+        expect(res.body.reviews[0].comment_count).toBe(0);
+        expect(res.body.reviews[7].review_id).toBe(2);
+        expect(res.body.reviews[7].comment_count).toBe(3);
         res.body.reviews.forEach((review) => {
-          expect(typeof review.comment_count).toBe("string");
+          expect(typeof review.comment_count).toBe("number");
         });
       });
   });

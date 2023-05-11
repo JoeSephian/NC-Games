@@ -34,7 +34,7 @@ exports.allReviews = (sort_by = "created_at", order = "DESC") => {
   return db
     .query(
       `
-    SELECT a.owner, a.title, a.review_id, a.category, a.review_img_url, a.created_at, a.votes, a.designer, COALESCE (b.count, 0) AS comment_count
+    SELECT a.owner, a.title, a.review_id, a.category, a.review_img_url, a.created_at, a.votes, a.designer, CAST(COALESCE(b.count, 0) AS INTEGER) AS comment_count
     FROM reviews a
     LEFT OUTER JOIN(SELECT COUNT(body) as count, review_ID
         FROM comments
