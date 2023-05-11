@@ -129,7 +129,6 @@ describe("getComments", () => {
       .get("/api/reviews/3/comments")
       .expect(200)
       .then((res) => {
-        console.log(res.body.comments)
         expect(res.body.comments).toBeSortedBy("created_at", {
           descending: true,
         });
