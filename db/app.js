@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { getCategories, getEndpoints, getReview } = require("../controllers/controllers");
+const { getCategories, getEndpoints, getReview, getReviews } = require("../controllers/controllers");
 
 const app = express();
 
@@ -9,6 +9,8 @@ app.get("/api", getEndpoints)
 app.get("/api/categories", getCategories);
 
 app.get("/api/reviews/:review_id", getReview);
+
+app.get("/api/reviews", getReviews)
 
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {
