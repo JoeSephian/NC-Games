@@ -96,7 +96,6 @@ describe("getReviews", () => {
       .get("/api/reviews")
       .expect(200)
       .then((res) => {
-        console.log(res.body);
         expect(res.body.reviews[0].review_id).toBe(7);
         expect(res.body.reviews[0].comment_count).toBe(0);
         expect(res.body.reviews[7].review_id).toBe(2);
@@ -104,6 +103,59 @@ describe("getReviews", () => {
         res.body.reviews.forEach((review) => {
           expect(typeof review.comment_count).toBe("number");
         });
+      });
+  });
+});
+
+describe("getComments", () => {
+  it("GET - status: 200 - responds with all comments for a review", () => {
+    return request(app)
+      .get(`/api/reviews/2/comments`)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comments.length).toBe(3);
+        res.body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.review_id).toBe("number");
+        });
+      });
+  });
+  it("should be sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  it("GET - status: 400 - if given an invalid id type", () => {
+    return request(app)
+      .get(`/api/reviews/notavalidid/comments`)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("400 - bad request");
+      });
+  });
+  it("GET - status: 404 - if given a valid id but returning no results", () => {
+    return request(app)
+      .get(`/api/reviews/200/comments`)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("404 - not found");
+      });
+  });
+  it('GET - status: 200 - if given a valid article with no comments', () => {
+    return request(app)
+    .get(`/api/reviews/7/comments`)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.msg).toBe("This review has no comments");
       });
   });
 });
