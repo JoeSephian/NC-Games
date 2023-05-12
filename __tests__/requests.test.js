@@ -168,7 +168,6 @@ describe.only('patchReview', () => {
     .query({inc_votes})
     .expect(200)
     .then((res) => {
-      console.log(res)
       expect(res.body.votes).toBe(9);
     })
   })
@@ -179,7 +178,6 @@ describe.only('patchReview', () => {
     .query({inc_votes})
     .expect(200)
     .then((res) => {
-      console.log(res)
       expect(res.body.votes).toBe(2);
     })
   })
@@ -190,7 +188,6 @@ describe.only('patchReview', () => {
     .query({inc_votes})
     .expect(200)
     .then((res) => {
-      console.log(res)
       expect(res.body.votes).toBe(-5);
     })
   })
