@@ -72,3 +72,22 @@ exports.allComments = (review_id) => {
       return rows;
     });
 };
+
+exports.createComment = (newComment, review_id) => {
+  const { body, author } = newComment;
+  const postCommentQuery = `
+  INSERT INTO comments
+  (body, author, review_id)
+  VALUES
+  ($1, $2, $3)
+  RETURNING *;`;
+  const queryValues = [body, author, review_id];
+  return exports
+    .returnReview(review_id)
+    .then(() => {
+      return db.query(postCommentQuery, queryValues);
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    })
+};
