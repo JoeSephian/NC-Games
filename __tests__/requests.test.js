@@ -173,6 +173,26 @@ describe("postComment", () => {
         expect(res.body.msg).toBe("404 - user not found");
       });
   });
+  it("Should return 201 if extra unnecessary properties are included", () => {
+    const newComment = {
+      body: "this game is wonderful",
+      author: "mallionaire",
+      votes: 200
+    };
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then((res) => {
+        console.log(res.body);
+        expect(res.body.comment.author).toBe("mallionaire");
+        expect(res.body.comment.body).toBe("this game is wonderful");
+        expect(res.body.comment.comment_id).toBe(7);
+        expect(typeof res.body.comment.created_at).toBe("string");
+        expect(res.body.comment.review_id).toBe(2);
+        expect(res.body.comment.votes).toBe(0);
+      });
+  });
 });
 
 describe("get API endpoints", () => {
