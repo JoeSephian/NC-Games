@@ -201,7 +201,6 @@ describe.only('patchReview', () => {
     .query({inc_votes})
     .expect(400)
     .then((res) => {
-      console.log(res)
       expect(res.body.msg).toBe('400 - bad request');
     })
   });
