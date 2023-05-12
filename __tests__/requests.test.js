@@ -118,7 +118,7 @@ describe("postComment", () => {
       .send(newComment)
       .expect(201)
       .then((res) => {
-        console.log(res.body)
+        console.log(res.body);
         expect(res.body.comment.author).toBe("mallionaire");
         expect(res.body.comment.body).toBe("this game is wonderful");
         expect(res.body.comment.comment_id).toBe(7);
@@ -128,11 +128,49 @@ describe("postComment", () => {
       });
   });
   it("should return 404 if incorrect endpoint", () => {
+    const newComment = {
+      body: "this game is wonderful",
+      author: "mallionaire"
+    };
     return request(app)
-      .get("/api/reviews/200/comments")
+      .post("/api/reviews/200/comments")
+      .send(newComment)
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("404 - not found");
+      });
+  });
+  it("should return 400 if ID is incorrect type", () => {
+    return request(app)
+      .post("/api/reviews/notavalidid/comments")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("400 - bad request");
+      });
+  });
+  it("should return 400 if body or author are missing", () => {
+    const newComment = {
+      body: "this game is wonderful"
+    };
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("400 - bad request");
+      });
+  });
+  it("should return 404 if username is not found", () => {
+    const newComment = {
+      body: "this game is wonderful",
+      author: "yoloswaggins"
+    };
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(newComment)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("404 - user not found");
       });
   });
 });

@@ -56,13 +56,13 @@ exports.createComment = (newComment, review_id) => {
   VALUES
   ($1, $2, $3)
   RETURNING *;`;
-
-  return db
-    .query(postCommentQuery, [body, author, review_id])
+  const queryValues = [body, author, review_id];
+  return exports
+    .returnReview(review_id)
+    .then(() => {
+      return db.query(postCommentQuery, queryValues);
+    })
     .then(({ rows }) => {
       return rows[0];
     })
-    .catch((err) => {
-      console.log(err);
-    });
 };
