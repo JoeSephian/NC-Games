@@ -118,7 +118,6 @@ describe("postComment", () => {
       .send(newComment)
       .expect(201)
       .then((res) => {
-        console.log(res.body);
         expect(res.body.comment.author).toBe("mallionaire");
         expect(res.body.comment.body).toBe("this game is wonderful");
         expect(res.body.comment.comment_id).toBe(7);
@@ -184,7 +183,6 @@ describe("postComment", () => {
       .send(newComment)
       .expect(201)
       .then((res) => {
-        console.log(res.body);
         expect(res.body.comment.author).toBe("mallionaire");
         expect(res.body.comment.body).toBe("this game is wonderful");
         expect(res.body.comment.comment_id).toBe(7);
