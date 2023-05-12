@@ -1,5 +1,11 @@
-const { allCategories, returnReview, allReviews, createComment } = require("../models/models");
-const endpoints = require('../endpoints.json')
+const {
+  allCategories,
+  returnReview,
+  allReviews,
+  allComments,
+  createComment
+} = require("../models/models");
+const endpoints = require("../endpoints.json");
 
 exports.getCategories = (req, res, next) => {
   const { slug, description } = req.query;
@@ -12,7 +18,7 @@ exports.getCategories = (req, res, next) => {
 
 exports.getReview = (req, res, next) => {
   const { review_id } = req.params;
-  return returnReview(review_id, [req.query]  )
+  return returnReview(review_id)
     .then((review) => {
       res.status(200).send(review);
     })
@@ -21,10 +27,20 @@ exports.getReview = (req, res, next) => {
 
 exports.getReviews = (req, res, next) => {
   return allReviews()
-  .then((reviews) => {
-    res.status(200).send({ reviews })
-  })
-}
+    .then((reviews) => {
+      res.status(200).send({ reviews });
+    })
+    .catch(next);
+};
+
+exports.getComments = (req, res, next) => {
+  const { review_id } = req.params;
+  return allComments(review_id)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+};
 
 exports.postComment = (req, res, next) => {
   const newComment = req.body;
@@ -37,5 +53,5 @@ exports.postComment = (req, res, next) => {
 }
 
 exports.getEndpoints = (req, res, next) => {
-  res.status(200).send(endpoints)
-}
+  res.status(200).send(endpoints);
+};
