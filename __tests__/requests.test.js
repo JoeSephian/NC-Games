@@ -160,6 +160,92 @@ describe("getComments", () => {
   });
 });
 
+describe("postComment", () => {
+  it("GET - status: 201 - array of reviews is returned with the correct properties", () => {
+    const newComment = {
+      body: "this game is wonderful",
+      author: "mallionaire",
+    };
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then((res) => {
+        expect(res.body.comment.author).toBe("mallionaire");
+        expect(res.body.comment.body).toBe("this game is wonderful");
+        expect(res.body.comment.comment_id).toBe(7);
+        expect(typeof res.body.comment.created_at).toBe("string");
+        expect(res.body.comment.review_id).toBe(2);
+        expect(res.body.comment.votes).toBe(0);
+      });
+  });
+  it("should return 404 if incorrect endpoint", () => {
+    const newComment = {
+      body: "this game is wonderful",
+      author: "mallionaire"
+    };
+    return request(app)
+      .post("/api/reviews/200/comments")
+      .send(newComment)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("404 - not found");
+      });
+  });
+  it("should return 400 if ID is incorrect type", () => {
+    return request(app)
+      .post("/api/reviews/notavalidid/comments")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("400 - bad request");
+      });
+  });
+  it("should return 400 if body or author are missing", () => {
+    const newComment = {
+      body: "this game is wonderful"
+    };
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("400 - bad request");
+      });
+  });
+  it("should return 404 if username is not found", () => {
+    const newComment = {
+      body: "this game is wonderful",
+      author: "yoloswaggins"
+    };
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(newComment)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("404 - user not found");
+      });
+  });
+  it("Should return 201 if extra unnecessary properties are included", () => {
+    const newComment = {
+      body: "this game is wonderful",
+      author: "mallionaire",
+      votes: 200
+    };
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then((res) => {
+        expect(res.body.comment.author).toBe("mallionaire");
+        expect(res.body.comment.body).toBe("this game is wonderful");
+        expect(res.body.comment.comment_id).toBe(7);
+        expect(typeof res.body.comment.created_at).toBe("string");
+        expect(res.body.comment.review_id).toBe(2);
+        expect(res.body.comment.votes).toBe(0);
+      });
+  });
+});
+
 describe('patchReview', () => {
   it('PATCH - status: 200 - if given valid change request will pass', () => {
     const inc_votes = 4
