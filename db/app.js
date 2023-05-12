@@ -1,5 +1,4 @@
 const express = require("express");
-
 const {
   getCategories,
   getEndpoints,
@@ -41,7 +40,8 @@ app.all("/*", (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).send({ msg: "500 - internal server error" });
+  console.log(err)
+    res.status(500).send({ msg: "500 - internal server error" });
 });
 
 module.exports = app;

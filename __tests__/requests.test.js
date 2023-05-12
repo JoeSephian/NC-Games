@@ -150,6 +150,14 @@ describe("getComments", () => {
         expect(res.body.msg).toBe("404 - not found");
       });
   });
+  it('GET - status: 200 - if given a valid article with no comments', () => {
+    return request(app)
+    .get(`/api/reviews/7/comments`)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.msg).toBe("This review has no comments");
+      });
+  });
 });
 
 describe("get API endpoints", () => {

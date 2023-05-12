@@ -24,7 +24,10 @@ exports.returnReview = (review_id) => {
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "404 - not found" });
+        return Promise.reject({
+          status: 404,
+          msg: "404 - not found",
+        });
       }
       return rows[0];
     });
@@ -49,20 +52,22 @@ exports.allReviews = (sort_by = "created_at", order = "DESC") => {
 };
 
 exports.allComments = (review_id) => {
-  return db
-    .query(
-      `
-  SELECT * FROM comments a
-  JOIN reviews b
-  ON a.review_ID=b.review_ID
-  WHERE a.review_ID = $1
-  ORDER BY a.created_at DESC;
-  `,
-  [review_id]
-    )
+  const queryStr = `
+  SELECT * FROM comments
+  WHERE review_ID = $1
+  ORDER BY created_at DESC;
+  `;
+  const queryValues = [review_id];
+  return exports.returnReview(review_id)
+    .then(() => {
+      return db.query(queryStr, queryValues);
+    })
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "404 - not found" });
+        return Promise.reject({
+          status: 200,
+          msg: "This review has no comments",
+        });
       }
       return rows;
     });
