@@ -160,7 +160,7 @@ describe("getComments", () => {
   });
 });
 
-describe.only('patchReview', () => {
+describe('patchReview', () => {
   it('PATCH - status: 200 - if given valid change request will pass', () => {
     const inc_votes = 4
     return request(app)
@@ -168,7 +168,7 @@ describe.only('patchReview', () => {
     .query({inc_votes})
     .expect(200)
     .then((res) => {
-      expect(res.body.votes).toBe(9);
+      expect(res.body.review.votes).toBe(9);
     })
   })
   it("number is updated correctly with a negative inc given", () => {
@@ -178,7 +178,7 @@ describe.only('patchReview', () => {
     .query({inc_votes})
     .expect(200)
     .then((res) => {
-      expect(res.body.votes).toBe(2);
+      expect(res.body.review.votes).toBe(2);
     })
   })
   it('votes can drop below 0', () => {
@@ -188,7 +188,7 @@ describe.only('patchReview', () => {
     .query({inc_votes})
     .expect(200)
     .then((res) => {
-      expect(res.body.votes).toBe(-5);
+      expect(res.body.review.votes).toBe(-5);
     })
   })
   it('should return 400 if given an invalid id type', () => {
@@ -221,13 +221,25 @@ describe.only('patchReview', () => {
       expect(res.body.msg).toBe('400 - bad request');
     })
   });
-  it('should return 400 if given no id', () => {
+  it('should return 200 if given no query', () => {
     return request(app)
-    .patch('/api/reviews/200')
+    .patch('/api/reviews/2')
     .query()
-    .expect(404)
+    .expect(200)
     .then((res) => {
-      expect(res.body.msg).toBe('404 - not found');
+      expect(res.body).toEqual({
+        review: {
+          review_id: 2,
+          title: 'Jenga',
+          category: 'dexterity',
+          designer: 'Leslie Scott',
+          owner: 'philippaclaire9',
+          review_body: 'Fiddly fun for all the family',
+          review_img_url: 'https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700',
+          created_at: '2021-01-18T10:01:41.251Z',
+          votes: 5
+        }
+      });
     })
   });
 });
@@ -251,7 +263,7 @@ describe("404 error handling", () => {
       .get("/api/notavalidurl")
       .expect(404)
       .then((res) => {
-        expect(res.body).toBe("404 - not found");
+        expect(res.body.msg).toBe("404 - not found");
       });
   });
 });

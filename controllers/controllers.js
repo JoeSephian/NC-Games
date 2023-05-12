@@ -45,9 +45,17 @@ exports.getComments = (req, res, next) => {
 exports.patchReview = (req, res, next) => {
   const { review_id } = req.params
   const { inc_votes } = req.query
+
+  if (inc_votes === undefined) {
+    return returnReview(review_id)
+    .then((review) => {
+      res.status(200).send({ review })
+    })
+    .catch(next)
+  }
   return updateVotes(inc_votes, review_id)
   .then((update) => {
-    res.status(200).send(update[0])
+    res.status(200).send({ review: update[0] })
   })
   .catch(next)
 }
