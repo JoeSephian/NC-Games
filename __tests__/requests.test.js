@@ -160,6 +160,82 @@ describe("getComments", () => {
   });
 });
 
+describe.only('patchReview', () => {
+  it('PATCH - status: 200 - if given valid change request will pass', () => {
+    const inc_votes = 4
+    return request(app)
+    .patch('/api/reviews/2')
+    .query({inc_votes})
+    .expect(200)
+    .then((res) => {
+      console.log(res)
+      expect(res.body.votes).toBe(9);
+    })
+  })
+  it("number is updated correctly with a negative inc given", () => {
+    const inc_votes = -3
+    return request(app)
+    .patch('/api/reviews/2')
+    .query({inc_votes})
+    .expect(200)
+    .then((res) => {
+      console.log(res)
+      expect(res.body.votes).toBe(2);
+    })
+  })
+  it('votes can drop below 0', () => {
+    const inc_votes = -10
+    return request(app)
+    .patch('/api/reviews/2')
+    .query({inc_votes})
+    .expect(200)
+    .then((res) => {
+      console.log(res)
+      expect(res.body.votes).toBe(-5);
+    })
+  })
+  it('should return 400 if given an invalid id type', () => {
+    const inc_votes = 4
+    return request(app)
+    .patch('/api/reviews/notavalidid')
+    .query({inc_votes})
+    .expect(400)
+    .then((res) => {
+      console.log(res)
+      expect(res.body.msg).toBe('400 - bad request');
+    })
+  });
+  it('should return 400 if given an id that has no match', () => {
+    const inc_votes = 4
+    return request(app)
+    .patch('/api/reviews/200')
+    .query({inc_votes})
+    .expect(404)
+    .then((res) => {
+      expect(res.body.msg).toBe('404 - not found');
+    })
+  });
+  it('should return 400 if given non-numerical votes', () => {
+    const inc_votes = 'hello'
+    return request(app)
+    .patch('/api/reviews/2')
+    .query({inc_votes})
+    .expect(400)
+    .then((res) => {
+      expect(res.body.msg).toBe('400 - bad request');
+    })
+  });
+  it('should return 400 if given no id', () => {
+    return request(app)
+    .patch('/api/reviews/200')
+    .query()
+    .expect(404)
+    .then((res) => {
+      expect(res.body.msg).toBe('404 - not found');
+    })
+  });
+});
+
 describe("get API endpoints", () => {
   it("GET - status: 200 - responds with all api endpoints", () => {
     return request(app)
@@ -179,7 +255,7 @@ describe("404 error handling", () => {
       .get("/api/notavalidurl")
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("404 - not found");
+        expect(res.body).toBe("404 - not found");
       });
   });
 });
