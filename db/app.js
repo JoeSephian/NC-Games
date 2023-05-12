@@ -5,7 +5,8 @@ const {
   getReview,
   getReviews,
   getComments,
-  postComment
+  postComment,
+  patchReview
 } = require("../controllers/controllers");
 
 const app = express();
@@ -20,9 +21,11 @@ app.get("/api/reviews/:review_id", getReview);
 
 app.get("/api/reviews", getReviews);
 
-app.get("/api/reviews/:review_id/comments", getComments);;
+app.get("/api/reviews/:review_id/comments", getComments);
 
 app.post("/api/reviews/:review_id/comments", postComment);
+
+app.patch("/api/reviews/:review_id", patchReview);
 
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
@@ -68,8 +71,8 @@ app.all("/*", (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err)
-    res.status(500).send({ msg: "500 - internal server error" });
+  console.log(err);
+  res.status(500).send({ msg: "500 - internal server error" });
 });
 
 module.exports = app;

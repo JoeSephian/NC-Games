@@ -246,6 +246,90 @@ describe("postComment", () => {
   });
 });
 
+describe('patchReview', () => {
+  it('PATCH - status: 200 - if given valid change request will pass', () => {
+    const inc_votes = 4
+    return request(app)
+    .patch('/api/reviews/2')
+    .query({inc_votes})
+    .expect(200)
+    .then((res) => {
+      expect(res.body.review.votes).toBe(9);
+    })
+  })
+  it("number is updated correctly with a negative inc given", () => {
+    const inc_votes = -3
+    return request(app)
+    .patch('/api/reviews/2')
+    .query({inc_votes})
+    .expect(200)
+    .then((res) => {
+      expect(res.body.review.votes).toBe(2);
+    })
+  })
+  it('votes can drop below 0', () => {
+    const inc_votes = -10
+    return request(app)
+    .patch('/api/reviews/2')
+    .query({inc_votes})
+    .expect(200)
+    .then((res) => {
+      expect(res.body.review.votes).toBe(-5);
+    })
+  })
+  it('should return 400 if given an invalid id type', () => {
+    const inc_votes = 4
+    return request(app)
+    .patch('/api/reviews/notavalidid')
+    .query({inc_votes})
+    .expect(400)
+    .then((res) => {
+      expect(res.body.msg).toBe('400 - bad request');
+    })
+  });
+  it('should return 400 if given an id that has no match', () => {
+    const inc_votes = 4
+    return request(app)
+    .patch('/api/reviews/200')
+    .query({inc_votes})
+    .expect(404)
+    .then((res) => {
+      expect(res.body.msg).toBe('404 - not found');
+    })
+  });
+  it('should return 400 if given non-numerical votes', () => {
+    const inc_votes = 'hello'
+    return request(app)
+    .patch('/api/reviews/2')
+    .query({inc_votes})
+    .expect(400)
+    .then((res) => {
+      expect(res.body.msg).toBe('400 - bad request');
+    })
+  });
+  it('should return 200 if given no query', () => {
+    return request(app)
+    .patch('/api/reviews/2')
+    .query()
+    .expect(200)
+    .then((res) => {
+      expect(res.body).toEqual({
+        review: {
+          review_id: 2,
+          title: 'Jenga',
+          category: 'dexterity',
+          designer: 'Leslie Scott',
+          owner: 'philippaclaire9',
+          review_body: 'Fiddly fun for all the family',
+          review_img_url: 'https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700',
+          created_at: '2021-01-18T10:01:41.251Z',
+          votes: 5
+        }
+      });
+    })
+  });
+});
+
 describe("get API endpoints", () => {
   it("GET - status: 200 - responds with all api endpoints", () => {
     return request(app)

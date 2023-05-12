@@ -3,7 +3,8 @@ const {
   returnReview,
   allReviews,
   allComments,
-  createComment
+  createComment,
+  updateVotes
 } = require("../models/models");
 const endpoints = require("../endpoints.json");
 
@@ -48,6 +49,24 @@ exports.postComment = (req, res, next) => {
   createComment(newComment, review_id)
   .then((comment) => {
     res.status(201).send({ comment })
+  })
+  .catch(next)
+}
+
+exports.patchReview = (req, res, next) => {
+  const { review_id } = req.params
+  const { inc_votes } = req.query
+
+  if (inc_votes === undefined) {
+    return returnReview(review_id)
+    .then((review) => {
+      res.status(200).send({ review })
+    })
+    .catch(next)
+  }
+  return updateVotes(inc_votes, review_id)
+  .then((update) => {
+    res.status(200).send({ review: update[0] })
   })
   .catch(next)
 }
