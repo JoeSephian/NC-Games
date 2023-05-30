@@ -6,14 +6,17 @@ const {
   getReviews,
   getComments,
   postComment,
-  patchReview
+  patchReview,
 } = require("../controllers/controllers");
+const cors = require("cors");
 
 const app = express();
 
+app.use(cors());
+
 app.use(express.json());
 
-app.get("/api", getEndpoints);;
+app.get("/api", getEndpoints);
 
 app.get("/api/categories", getCategories);
 
@@ -44,12 +47,12 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    if (err.code === "23502") {
-      res.status(400).send({ msg: "400 - bad request" });
-    } else {
-      next(err);
-    }
-  });
+  if (err.code === "23502") {
+    res.status(400).send({ msg: "400 - bad request" });
+  } else {
+    next(err);
+  }
+});
 
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
@@ -58,13 +61,13 @@ app.use((err, req, res, next) => {
     next(err);
   }
 });
-  app.use((err, req, res, next) => {
-    if (err.code === "23503") {
-      res.status(404).send({ msg: "404 - user not found" });
-    } else {
-      next(err);
-    }
-  });
+app.use((err, req, res, next) => {
+  if (err.code === "23503") {
+    res.status(404).send({ msg: "404 - user not found" });
+  } else {
+    next(err);
+  }
+});
 
 app.all("/*", (req, res, next) => {
   res.status(404).send({ msg: "404 - not found" });
