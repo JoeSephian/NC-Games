@@ -99,11 +99,12 @@ exports.updateVotes = (inc_votes, review_id) => {
   WHERE review_id = $2
   RETURNING *;
   `
-  return exports.returnReview(review_id)
-  .then(() =>{
+  // return exports.returnReview(review_id)
+  // .then(() =>{
     return db
   .query(queryStr, [inc_votes, review_id])
-  })
+  // }
+  // )
   .then(({ rows }) => {
     return rows;
   })
