@@ -251,7 +251,7 @@ describe.only('patchReview', () => {
     const inc_votes = 4
     return request(app)
     .patch('/api/reviews/2')
-    .query({inc_votes})
+    .send({inc_votes})
     .expect(200)
     .then((res) => {
       expect(res.body.review.votes).toBe(9);
@@ -260,7 +260,7 @@ describe.only('patchReview', () => {
   it("number is updated correctly with a negative inc given", () => {
     return request(app)
     .patch('/api/reviews/2')
-    .query({inc_votes: -3})
+    .send({inc_votes: -3})
     .expect(200)
     .then((res) => {
       expect(res.body.review.votes).toBe(2);
@@ -270,7 +270,7 @@ describe.only('patchReview', () => {
     const inc_votes = -10
     return request(app)
     .patch('/api/reviews/2')
-    .query({inc_votes})
+    .send({inc_votes})
     .expect(200)
     .then((res) => {
       expect(res.body.review.votes).toBe(-5);
@@ -280,7 +280,7 @@ describe.only('patchReview', () => {
     const inc_votes = 4
     return request(app)
     .patch('/api/reviews/notavalidid')
-    .query({inc_votes})
+    .send({inc_votes})
     .expect(400)
     .then((res) => {
       expect(res.body.msg).toBe('400 - bad request');
@@ -290,7 +290,7 @@ describe.only('patchReview', () => {
   //   const inc_votes = 4
   //   return request(app)
   //   .patch('/api/reviews/200')
-  //   .query({inc_votes})
+  //   .send({inc_votes})
   //   .expect(404)
   //   .then((res) => {
   //     expect(res.body.msg).toBe('404 - not found');
@@ -300,16 +300,16 @@ describe.only('patchReview', () => {
     const inc_votes = 'hello'
     return request(app)
     .patch('/api/reviews/2')
-    .query({inc_votes})
+    .send({inc_votes})
     .expect(400)
     .then((res) => {
       expect(res.body.msg).toBe('400 - bad request');
     })
   });
-  it('should return 200 if given no query', () => {
+  it('should return 200 if given no send', () => {
     return request(app)
     .patch('/api/reviews/2')
-    .query()
+    .send()
     .expect(200)
     .then((res) => {
       expect(res.body).toEqual({

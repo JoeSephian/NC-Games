@@ -55,7 +55,7 @@ exports.postComment = (req, res, next) => {
 
 exports.patchReview = (req, res, next) => {
   const { review_id } = req.params
-  const { inc_votes } = req.query
+  const { inc_votes } = req.body
 
   if (inc_votes === undefined) {
     return returnReview(review_id)
