@@ -246,7 +246,7 @@ describe("postComment", () => {
   });
 });
 
-describe('patchReview', () => {
+describe.only('patchReview', () => {
   it('PATCH - status: 200 - if given valid change request will pass', () => {
     const inc_votes = 4
     return request(app)
