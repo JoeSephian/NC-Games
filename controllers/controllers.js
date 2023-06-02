@@ -75,13 +75,17 @@ exports.patchReview = (req, res, next) => {
 }
 
 exports.deleteComment = (req, res, next) => {
-  const { comment_id } = req.params
+  const { comment_id } = req.params;
   return removeComment(comment_id)
-  .then((deleteComment) => {
-    res.status(204).send({ msg: "204 - comment deleted"})
-  })
-  .catch(next)
-}
+    .then((deleteComment) => {
+      if (deleteComment) {
+        res.status(204).send({ msg: "204 - comment deleted" });
+      } else {
+        next({ status: 404, msg: "404 - comment not found" });
+      }
+    })
+    .catch(next);
+};
 
 exports.getEndpoints = (req, res, next) => {
   res.status(200).send(endpoints);
