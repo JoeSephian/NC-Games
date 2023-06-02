@@ -4,7 +4,8 @@ const {
   allReviews,
   allComments,
   createComment,
-  updateVotes
+  updateVotes,
+  removeComment
 } = require("../models/models");
 const endpoints = require("../endpoints.json");
 
@@ -69,6 +70,15 @@ exports.patchReview = (req, res, next) => {
   return updateVotes(inc_votes, review_id)
   .then((update) => {
     res.status(200).send({ review: update[0] })
+  })
+  .catch(next)
+}
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id } = req.params
+  return removeComment(comment_id)
+  .then((deleteComment) => {
+    res.status(200).send({ msg: "200 - comment deleted"})
   })
   .catch(next)
 }

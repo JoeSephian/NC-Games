@@ -112,7 +112,6 @@ describe("getReviews", () => {
       .then((res) => {
         expect(res.body.reviews.length).toBe(1);
         const review = res.body.reviews[0];
-        console.log(review)
           expect(typeof review.owner).toBe("string");
           expect(typeof review.title).toBe("string");
           expect(typeof review.review_id).toBe("number");
@@ -345,6 +344,27 @@ describe('patchReview', () => {
       .then((res) => {
         expect(res.body.msg).toBe('400 - bad request');
       });
+  });
+});
+
+describe('delete comment', () => {
+  it('DELETE - status: 200 - deletes the given comment', () => {
+    return request(app)
+    .delete("/api/comments/3")
+    .expect(200)
+    .then((res) => {
+      expect(res.body.msg).toBe('200 - comment deleted')
+      console.log(res)
+    })
+  });
+  it('DELETE - status: 200 - deletes the given comment', () => {
+    return request(app)
+    .delete("/api/comments/13043")
+    .expect(404)
+    .then((res) => {
+      expect(res.body.msg).toBe('404 - comment not found')
+      console.log(res)
+    })
   });
 });
 
