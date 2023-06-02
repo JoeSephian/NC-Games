@@ -47,6 +47,14 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  if (err.code === "23503") {
+    res.status(404).send({ msg: "404 - user not found" });
+  } else {
+    next(err);
+  }
+});
+
+app.use((err, req, res, next) => {
   if (err.code === "23502") {
     res.status(400).send({ msg: "400 - bad request" });
   } else {
@@ -55,27 +63,13 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  if (err.code === "22P02") {
-    res.status(400).send({ msg: "400 - bad request" });
-  } else {
-    next(err);
-  }
-});
-app.use((err, req, res, next) => {
-  if (err.code === "23503") {
-    res.status(404).send({ msg: "404 - user not found" });
-  } else {
-    next(err);
-  }
+  console.log(err);
+  res.status(500).send({ msg: err });
 });
 
 app.all("/*", (req, res, next) => {
   res.status(404).send({ msg: "404 - not found" });
 });
 
-app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send({ msg: err });
-});
 
 module.exports = app;

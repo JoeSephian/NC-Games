@@ -111,17 +111,17 @@ describe("getReviews", () => {
       .expect(200)
       .then((res) => {
         expect(res.body.reviews.length).toBe(1);
-        res.body.reviews.forEach((review) => {
+        const review = res.body.reviews[0];
+        console.log(review)
           expect(typeof review.owner).toBe("string");
           expect(typeof review.title).toBe("string");
           expect(typeof review.review_id).toBe("number");
           expect(typeof review.category).toBe("string");
-          expect(review.categoy).toBe("dexterity")
+          expect(review.category).toBe("dexterity")
           expect(typeof review.review_img_url).toBe("string");
           expect(typeof review.created_at).toBe("string");
           expect(typeof review.votes).toBe("number");
           expect(typeof review.designer).toBe("string");
-        });
       });
   });
 });
@@ -265,7 +265,7 @@ describe("postComment", () => {
   });
 });
 
-describe.only('patchReview', () => {
+describe('patchReview', () => {
   it('PATCH - status: 200 - if given valid change request will pass', () => {
     const inc_votes = 4
     return request(app)
