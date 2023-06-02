@@ -105,6 +105,25 @@ describe("getReviews", () => {
         });
       });
   });
+  it("GET - status: 200 - reviews are returned filtered by category", () => {
+    return request(app)
+      .get("/api/reviews?category=dexterity")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.reviews.length).toBe(1);
+        res.body.reviews.forEach((review) => {
+          expect(typeof review.owner).toBe("string");
+          expect(typeof review.title).toBe("string");
+          expect(typeof review.review_id).toBe("number");
+          expect(typeof review.category).toBe("string");
+          expect(review.categoy).toBe("dexterity")
+          expect(typeof review.review_img_url).toBe("string");
+          expect(typeof review.created_at).toBe("string");
+          expect(typeof review.votes).toBe("number");
+          expect(typeof review.designer).toBe("string");
+        });
+      });
+  });
 });
 
 describe("getComments", () => {
@@ -286,16 +305,6 @@ describe.only('patchReview', () => {
       expect(res.body.msg).toBe('400 - bad request');
     })
   });
-  // it('should return 400 if given an id that has no match', () => {
-  //   const inc_votes = 4
-  //   return request(app)
-  //   .patch('/api/reviews/200')
-  //   .send({inc_votes})
-  //   .expect(404)
-  //   .then((res) => {
-  //     expect(res.body.msg).toBe('404 - not found');
-  //   })
-  // });
   it('should return 400 if given non-numerical votes', () => {
     const inc_votes = 'hello'
     return request(app)
@@ -326,6 +335,16 @@ describe.only('patchReview', () => {
         }
       });
     })
+  });
+  it('should return 400 if the review ID is not a number', () => {
+    const inc_votes = 4;
+    return request(app)
+      .patch('/api/reviews/notavalidid')
+      .send({ inc_votes })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe('400 - bad request');
+      });
   });
 });
 

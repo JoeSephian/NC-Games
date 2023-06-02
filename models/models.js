@@ -34,21 +34,24 @@ exports.returnReview = (review_id) => {
 };
 
 exports.allReviews = (sort_by = "created_at", order = "DESC") => {
-  return db
-    .query(
-      `
-    SELECT a.owner, a.title, a.review_id, a.category, a.review_img_url, a.created_at, a.votes, a.designer, CAST(COALESCE(b.count, 0) AS INTEGER) AS comment_count
-    FROM reviews a
-    LEFT OUTER JOIN(SELECT COUNT(body) as count, review_ID
-        FROM comments
-        GROUP by review_ID ) b
-      ON a.review_ID=b.review_ID
-    ORDER BY ${sort_by} ${order};
-    `
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+  let queryStr = `
+  SELECT a.owner, a.title, a.review_id, a.category, a.review_img_url, a.created_at, a.votes, a.designer, CAST(COALESCE(b.count, 0) AS INTEGER) AS comment_count
+  FROM reviews a
+  LEFT OUTER JOIN (SELECT COUNT(body) as count, review_ID FROM comments GROUP BY review_ID) b
+  ON a.review_ID=b.review_ID
+`;
+  let queryValues = [];
+
+  if (category) {
+    queryStr += `WHERE a.category = $1`;
+    queryValues.push(category);
+  }
+
+  queryStr += `ORDER BY ${sort_by} ${order};`;
+
+  return db(queryStr, queryValues).then(({ rows }) => {
+    return rows;
+  });
 };
 
 exports.allComments = (review_id) => {
@@ -58,7 +61,8 @@ exports.allComments = (review_id) => {
   ORDER BY created_at DESC;
   `;
   const queryValues = [review_id];
-  return exports.returnReview(review_id)
+  return exports
+    .returnReview(review_id)
     .then(() => {
       return db.query(queryStr, queryValues);
     })
@@ -89,7 +93,7 @@ exports.createComment = (newComment, review_id) => {
     })
     .then(({ rows }) => {
       return rows[0];
-    })
+    });
 };
 
 exports.updateVotes = (inc_votes, review_id) => {
@@ -98,14 +102,11 @@ exports.updateVotes = (inc_votes, review_id) => {
   SET votes = votes + $1
   WHERE review_id = $2
   RETURNING *;
-  `
-  // return exports.returnReview(review_id)
-  // .then(() =>{
-    return db
-  .query(queryStr, [inc_votes, review_id])
-  // }
-  // )
-  .then(({ rows }) => {
-    return rows;
-  })
-}
+  `;
+  return db
+    .query(queryStr, [inc_votes, review_id])
+
+    .then(({ rows }) => {
+      return rows;
+    });
+};
