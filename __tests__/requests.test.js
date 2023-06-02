@@ -348,16 +348,29 @@ describe('patchReview', () => {
 });
 
 describe('delete comment', () => {
-  it('DELETE - status: 200 - deletes the given comment', () => {
+  it("check that the comment has actually been deleted", () => {
     return request(app)
-    .delete("/api/comments/3")
-    .expect(200)
-    .then((res) => {
-      expect(res.body.msg).toBe('200 - comment deleted')
-      console.log(res)
-    })
+      .get(`/api/reviews/2/comments`)
+      .expect(200)
+      .then((res) => {
+        const numberOfComments = res.body.comments.length
+        const comment_id = res.body.comments[0].comment_id
+        console.log(numberOfComments, comment_id)
+        return request(app)
+          .delete(`/api/comments/${comment_id}`)
+          .expect(204)
+          .then(() => {
+            return request(app)
+            .get(`/api/reviews/2/comments`)
+            .expect(200)
+            .then((res) => {
+              expect(res.body.comments.length).toBe(numberOfComments - 1)
+              expect(res.body.comments[0].comment_id).not.toBe(comment_id)
+            })
+          });
+      });
   });
-  it('DELETE - status: 200 - deletes the given comment', () => {
+  it('DELETE - status: 404 - comment not found', () => {
     return request(app)
     .delete("/api/comments/13043")
     .expect(404)

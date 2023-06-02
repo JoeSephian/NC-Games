@@ -78,7 +78,7 @@ exports.deleteComment = (req, res, next) => {
   const { comment_id } = req.params
   return removeComment(comment_id)
   .then((deleteComment) => {
-    res.status(200).send({ msg: "200 - comment deleted"})
+    res.status(204).send({ msg: "204 - comment deleted"})
   })
   .catch(next)
 }
