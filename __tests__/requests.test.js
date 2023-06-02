@@ -355,7 +355,6 @@ describe('delete comment', () => {
       .then((res) => {
         const numberOfComments = res.body.comments.length
         const comment_id = res.body.comments[0].comment_id
-        console.log(numberOfComments, comment_id)
         return request(app)
           .delete(`/api/comments/${comment_id}`)
           .expect(204)
@@ -376,7 +375,6 @@ describe('delete comment', () => {
     .expect(404)
     .then((res) => {
       expect(res.body.msg).toBe('404 - comment not found')
-      console.log(res)
     })
   });
 });

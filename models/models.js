@@ -116,16 +116,12 @@ exports.removeComment = (comment_id) => {
   DELETE FROM comments
   WHERE comment_id = $1
   RETURNING *
-  `
-  return db
-  .query(queryStr, [comment_id])
-  .then(({ rows }) => {
-    if (rows.length === 0) {
-      return Promise.reject({
-        status: 404,
-        msg: "404 - comment not found"
-      })
-    }
-    return rows
-  })
-}
+  `;
+  return db.query(queryStr, [comment_id])
+    .then(({ rowCount, rows }) => {
+      if (rowCount === 0) {
+        throw { status: 404, msg: '404 - comment not found' };
+      }
+      return rows;
+    });
+};
